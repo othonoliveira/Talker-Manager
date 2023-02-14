@@ -56,4 +56,14 @@ talkerRoute.put('/:id', async (req, res) => {
   return res.status(200).send(talkers[index]);
 });
 
+talkerRoute.delete('/:id', async (req, res) => {
+  if (tokenValidation(req) != null) return res.status(401).send(tokenValidation(req));
+  const { id } = req.params;
+  let talkers = await fs.readFile(path, 'utf-8');
+  talkers = JSON.parse(talkers);
+  const newData = talkers.filter((talker) => +talker.id !== +id);
+  await fs.writeFile(path, JSON.stringify([...newData], null, 2));
+  return res.status(204).send();
+});
+
 module.exports = talkerRoute;
